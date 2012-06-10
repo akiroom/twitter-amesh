@@ -5,6 +5,7 @@ twitterのアイコンを東京アメッシュの画像にするスクリプト�
 ライセンス
 ----------
 (C) Hiroki Akiyama htto://akiroom.com/
+
 MIT License or GPL License
 
 注意事項
