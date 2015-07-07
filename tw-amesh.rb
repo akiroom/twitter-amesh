@@ -14,13 +14,13 @@ RESULT_IMG_FILENAME = './amesh-icon.png'
 Dir::chdir(File.expand_path(File.dirname(__FILE__)))
 
 # Twitterクライアントを設定
-YOUR_CONSUMER_KEY = ENV['YOUR_CONSUMER_KEY']
-YOUR_CONSUMER_SECRET = ENV['YOUR_CONSUMER_SECRET']
+CONSUMER_KEY = ENV['CONSUMER_KEY']
+CONSUMER_SECRET = ENV['CONSUMER_SECRET']
 YOUR_ACCESS_TOKEN = ENV['YOUR_ACCESS_TOKEN']
 YOUR_ACCESS_TOKEN_SECRET = ENV['YOUR_ACCESS_TOKEN_SECRET']
 tw_client = Twitter::REST::Client.new do |config|
-  config.consumer_key = YOUR_CONSUMER_KEY
-  config.consumer_secret = YOUR_CONSUMER_SECRET
+  config.consumer_key = CONSUMER_KEY
+  config.consumer_secret = CONSUMER_SECRET
   config.access_token = YOUR_ACCESS_TOKEN
   config.access_token_secret = YOUR_ACCESS_TOKEN_SECRET
 end

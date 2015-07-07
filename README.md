@@ -1,6 +1,14 @@
 twitter-amesh
 =============
-twitterのアイコンを東京アメッシュの画像にするスクリプトです。
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
+twitterのアイコンを東京アメッシュの画像にするスクリプトです。以下の環境変数を設定して利用してください。
+
+- CONSUMER_KEY
+- CONSUMER_SECRET
+- YOUR_ACCESS_TOKEN
+- YOUR_ACCESS_TOKEN_SECRET
 
 ライセンス
 ----------

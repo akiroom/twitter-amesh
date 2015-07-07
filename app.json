@@ -1,0 +1,27 @@
+{
+  "name": "twitter-amesh",
+  "description": "amesh for twitter profile image.",
+  "website": "https://github.com/akiroom/twitter-amesh",
+  "repository": "https://github.com/akiroom/twitter-amesh",
+  "env": {
+    "CONSUMER_KEY": {
+      "description": "Your application's consumer key(API key).",
+      "generator": "secret"
+    },
+    "CONSUMER_SECRET": {
+      "description": "Your application's consumer secret(API secret).",
+      "generator": "secret"
+    },
+    "YOUR_ACCESS_TOKEN": {
+      "description": "Your application's access token.",
+      "generator": "secret"
+    },
+    "YOUR_ACCESS_TOKEN_SECRET": {
+      "description": "Your application's access token secret.",
+      "generator": "secret"
+    }
+  },
+  "addons": [
+    "scheduler:standard"
+  ]
+}
