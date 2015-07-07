@@ -6,19 +6,19 @@
   "env": {
     "CONSUMER_KEY": {
       "description": "Your application's consumer key(API key).",
-      "generator": "secret"
+      "value": ""
     },
     "CONSUMER_SECRET": {
       "description": "Your application's consumer secret(API secret).",
-      "generator": "secret"
+      "value": ""
     },
     "YOUR_ACCESS_TOKEN": {
       "description": "Your application's access token.",
-      "generator": "secret"
+      "value": ""
     },
     "YOUR_ACCESS_TOKEN_SECRET": {
       "description": "Your application's access token secret.",
-      "generator": "secret"
+      "value": ""
     }
   },
   "addons": [
