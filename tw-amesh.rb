@@ -1,18 +1,44 @@
 #!/usr/bin/env ruby
+require 'bundler'
+Bundler.require
 require 'open-uri'
-require 'rubygems'
-require 'twitter'
-require 'RMagick'
+
 include Magick
+
+# 利用するファイル名の定数
+PROFILE_IMG_FILENAME = './profile-image.png'
+MAP_IMG_FILENAME = './map-image.png'
+RESULT_IMG_FILENAME = './amesh-icon.png'
 
 # カレントディレクトリをソースコード(このファイル)と同じディレクトリに変更
 Dir::chdir(File.expand_path(File.dirname(__FILE__)))
 
-# twitter用のOAuthキーの設定
-YOUR_CONSUMER_KEY       = "Consumer Key"
-YOUR_CONSUMER_SECRET    = "Consumer Secret"
-YOUR_OAUTH_TOKEN        = "OAuth Token"
-YOUR_OAUTH_TOKEN_SECRET = "OAuth Token Secret"
+# Twitterクライアントを設定
+YOUR_CONSUMER_KEY = ENV['YOUR_CONSUMER_KEY']
+YOUR_CONSUMER_SECRET = ENV['YOUR_CONSUMER_SECRET']
+YOUR_ACCESS_TOKEN = ENV['YOUR_ACCESS_TOKEN']
+YOUR_ACCESS_TOKEN_SECRET = ENV['YOUR_ACCESS_TOKEN_SECRET']
+tw_client = Twitter::REST::Client.new do |config|
+  config.consumer_key = YOUR_CONSUMER_KEY
+  config.consumer_secret = YOUR_CONSUMER_SECRET
+  config.access_token = YOUR_ACCESS_TOKEN
+  config.access_token_secret = YOUR_ACCESS_TOKEN_SECRET
+end
+
+# 未ダウンロードの場合、元のプロフィール画像をダウンロードして保存
+unless File.exist?(PROFILE_IMG_FILENAME)
+  prof_base_uri = tw_client.user.profile_image_uri(:original)
+  open(PROFILE_IMG_FILENAME, 'wb') do |output|
+    open(prof_base_uri) do |data|
+      output.write(data.read)
+    end
+  end
+end
+
+# プロフィールのベース画像を開いて暗くしておく
+img_prof_base = Magick::Image.read(PROFILE_IMG_FILENAME).first
+# http://stackoverflow.com/questions/19774405/rmagick-adjust-brightness
+img_prof_base = img_prof_base.level(-Magick::QuantumRange * 0.25, Magick::QuantumRange * 3.0, 1.0)
 
 # アメッシュの最新画像のURLを取得してRMagickで読み込む
 # 参考: http://qiita.com/items/efb42dd452f2a950e8b1
@@ -28,15 +54,19 @@ img_amesh = Magick::Image.from_blob(amesh_gif).first
 # img_amesh.write('./amesh.png')
 
 # ベースの画像の読み込み
-img_base = Magick::Image.read('./background.png').first
+img_base = Magick::Image.read(MAP_IMG_FILENAME).first
 
-# ベースの画像に合うサイズに切り出してリサイズ
+# ベースの画像に合うサイズにプロフィール画像をリサイズ
+img_prof_base.resize!(img_base.columns, img_base.rows)
+# ベースの画像に合うサイズにアメッシュを切り出してリサイズ
 img_amesh.crop!(197*4, 126*4, img_base.columns*4, img_base.rows*4).resize!(img_base.columns, img_base.rows)
 
-# ベースの画像と合成
-img_result = img_base.composite(img_amesh, 0, 0, OverCompositeOp)
+# プロフィール画像にベース画像を重ねる
+img_result = img_prof_base.composite(img_base, 0, 0, OverCompositeOp)
+# ↑の画像にアメッシュの画像を重ねる
+img_result = img_result.composite(img_amesh, 0, 0, OverCompositeOp)
 
-# ベースの画像に時刻を出力
+# 画像に時刻を出力
 draw = Draw.new
 draw.pointsize = 32
 draw.font_style = NormalStyle
@@ -46,16 +76,7 @@ draw.gravity = SouthEastGravity
 draw.annotate(img_result, 0, 0, 0, 0, "#{$1}/#{$2}/#{$3} #{$4}:#{$5}")
 
 # 画像を保存
-img_result.write('./amesh-icon.png')
+img_result.write(RESULT_IMG_FILENAME)
 
-# 参考: http://d.hatena.ne.jp/yoshidaa/20110112/1294846937
-Twitter.configure do |config|
-  config.consumer_key = YOUR_CONSUMER_KEY
-  config.consumer_secret = YOUR_CONSUMER_SECRET
-  config.oauth_token = YOUR_OAUTH_TOKEN
-  config.oauth_token_secret = YOUR_OAUTH_TOKEN_SECRET
-end
-client = Twitter::Client.new
-pic = open("./amesh-icon.png")
-client.update_profile_image(pic)
-
+pic = open(RESULT_IMG_FILENAME)
+tw_client.update_profile_image(pic)
